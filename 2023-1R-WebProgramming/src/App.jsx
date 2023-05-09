@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
@@ -6,6 +6,31 @@ import "./App.css";
 function App() {
   // const [count, setCount] = useState(0)
   const [row, setRow] = useState([]);
+
+  useEffect(() => {
+    console.log("mount or update");
+
+    return () =>{
+      console.log('unmount');
+    };
+  });
+
+  useEffect(() => {
+    console.log("mount only");
+    fetch(
+      "http://openapi.seoul.go.kr:8088/487272476f69303738306f4e777649/json/RealtimeCityAir/1/25"
+    ).then(function (res2) {
+      res2.json().then(function (res3) {
+        setRow(res3.RealtimeCityAir.row);
+      });
+    }
+    )
+  }, []);
+
+  useEffect(() => {
+    console.log("update only");
+  }, [row]);
+
 
   // if (row.length === 0) {
   //   fetch(
@@ -20,8 +45,8 @@ function App() {
   const fetchData = () => {
     fetch(
       "http://openapi.seoul.go.kr:8088/487272476f69303738306f4e777649/json/RealtimeCityAir/1/25"
-    ).then(function(res2){
-      res2.json().then(function(res3){
+    ).then(function (res2) {
+      res2.json().then(function (res3) {
         setRow(res3.RealtimeCityAir.row);
       });
     });
@@ -55,9 +80,9 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {row.map(function (obj) {
+            {row.map((obj, index) => {
               return (
-                <tr>
+                <tr key={index}>
                   <td>{obj.MSRSTE_NM}</td>
                   <td>{obj.PM10}</td>
                   <td>{obj.O3}</td>
