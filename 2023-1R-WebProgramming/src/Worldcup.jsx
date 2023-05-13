@@ -67,7 +67,8 @@ function Worldcup() {
     if( game.length === 0 || round + 1 > game.length / 2) return <p>로딩중입니다</p>;
   return (
     <div>
-      <p>이상형 월드컵 {round + 1} / {game.length / 2} <b>{game.length === 2 ? "결승" : game.length + "강"}</b></p>
+      {/* <p>이상형 월드컵 {round + 1} / {game.length / 2} <b>{game.length === 2 ? "결승" : game.length + "강"}</b></p> */}
+      <p>라면 월드컵 {game.length === 2 ? <b>결승전</b> : (round+1) + "/" + (game.length / 2) + (game.length !== 2 ? <b>강</b> : "")}</p>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <img src={game[round * 2].src} onClick={() => {
             setNextGame((prev) => prev.concat(game[round * 2]));
