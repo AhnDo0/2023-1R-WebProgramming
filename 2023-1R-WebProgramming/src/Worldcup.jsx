@@ -58,7 +58,7 @@ function Worldcup() {
         }
     }, [round]);//round가 바뀔 때마다 실행
     
-    if( game.lenth === 1){
+    if( game.length === 1){
         return <div>
             <p>라면 월드컵 우승</p>
             <img src={game[0].src} /><p>{game[0].name}</p>
@@ -66,21 +66,65 @@ function Worldcup() {
     }
     if( game.length === 0 || round + 1 > game.length / 2) return <p>로딩중입니다</p>;
   return (
-    <div>
+    <div style={styles.container}>
       {/* <p>이상형 월드컵 {round + 1} / {game.length / 2} <b>{game.length === 2 ? "결승" : game.length + "강"}</b></p> */}
-      <p>라면 월드컵 {game.length === 2 ? <b>결승전</b> : (round+1) + "/" + (game.length / 2) + (game.length !== 2 ? <b>강</b> : "")}</p>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <img src={game[round * 2].src} onClick={() => {
+      <p style={styles.title}>라면 월드컵 {game.length === 2 ? <b>결승전</b> : (round+1) + "/" + (game.length / 2)}{game.length !== 2 ? <b>강</b> : ""}</p>
+      <div style={styles.contentbox}>
+        <img src={game[round * 2].src} style={styles.image} onClick={() => {
             setNextGame((prev) => prev.concat(game[round * 2]));
             setRound((round)=> round + 1);
             }}/>
-        <img src={game[round * 2 + 1].src} onClick={()=> {
+        <img src={game[round * 2 + 1].src} style={styles.image} onClick={()=> {
             setNextGame((prev) => prev.concat(game[round * 2 + 1]));
             setRound((round) => round + 1);
         }}/>
       </div>
+      <div style={styles.textContent}>
+        <p style={styles.imageName}>{game[round * 2].name}</p>
+        <p style={styles.imageName}>{game[round * 2 + 1].name}</p>
+      </div>
     </div>
   );
+}
+
+const styles = {
+    container:{
+        width: "100vw",
+        height: "70vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItem: "center",
+        backgroundColor: 'gray',
+    },
+    title:{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        color: "white",
+        width: "100vh",
+        textAlign: "center",
+        margin: '0px 0px 30px 0px',
+        fontSize: '30px',
+    },
+    contentbox:{
+        display: 'flex', 
+        flexDirection: 'row',
+        width: '100%',
+    },
+    image:{
+        width: '50%',
+    },
+    textContent:{
+        position: 'absolute',
+        top: '70%',
+        display: 'flex',
+        justifyContent: 'space-around',
+        width: '100%',
+    },
+    imageName:{
+        color: 'white',
+        fontSize: '20px',
+        fontWeight: 'bold',
+        textShadow: '-2px 0px black, 0px 2px black, 2px 0px black, 0px -2px black',
+    }
 }
 
 export default Worldcup;
