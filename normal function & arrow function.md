@@ -9,7 +9,7 @@ var add = (num1, num2) => num1 + num2
 자바스크립트 일반 함수와 화살표 함수의 차이
 1. 'this'
     - 일반 함수의 'this'는 함수가 호출될 때 결정되며, 호출 컨텍스트에 따라 달라짐
-    ```
+    ```javascript
     function normalFunction() {
         console.log(this);
     }
