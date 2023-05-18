@@ -39,6 +39,24 @@ function Worldcup() {
   const [game, setGame] = useState([]);
   const [round, setRound] = useState(0);
   const [nextGame, setNextGame] = useState([]);
+  const [stat, setStat] = useState({
+    "너구리" : 0,
+    "육개장사발면" : 0,
+    "팔도비빔면" : 0,
+    "불닭볶음면" : 0,
+    "신라면" : 0,
+    "신라면블랙" : 0,
+    "안성탕면" : 0,
+    "왕뚜껑" : 0,
+    "까르보불닭컵라면" : 0,
+    "진라면매운맛" : 0,
+    "진라면순한맛" : 0,
+    "진짬뽕" : 0,
+    "짜파게티" : 0,
+    "짜파게티범벅" : 0,
+    "참깨라면" : 0,
+    "튀김우동" : 0,
+  });
 
   const [selectedImage, setSelectedImage] = useState(null);//클릭된 이미지 저장
 
@@ -51,7 +69,13 @@ function Worldcup() {
     }, 3000);
 };
 
+  // 처음 Worldcup 컴포넌트가 단 한 번 실행하는 함수
   useEffect(() => {
+    const 문자열 = localStorage.getItem("월드컵");
+    if( 문자열 != null ){
+      setStat( JSON.parse(문자열) );
+    }
+
     setGame(
       candidate
         .map((c) => {
@@ -72,7 +96,12 @@ function Worldcup() {
     }
   }, [round]); //round가 바뀔 때마다 실행
 
+  useEffect(() => {
+    console.log(stat);
+  }, [stat]);
+
   if (game.length === 1) {
+    localStorage.setItem("월드컵", JSON.stringify( stat ) );
     return (
       <div style={styles.container}>
         <p style={styles.title}>라면 월드컵 우승</p>
@@ -82,11 +111,56 @@ function Worldcup() {
         <div style={styles.textContent}>
             <p style={styles.imageName}>{game[0].name}</p>
         </div>
+        <p>{ stat[ game[0].name] }번 승리</p>
+
+        <table>
+          {Object.keys(stat).map(name => {
+            return <tr key={name}><td>{name}</td><td>{stat[name]}</td></tr>
+          })}
+        </table>
+
+        {/* <table>
+          {game.flatMap(item => {
+            const name = item.name;
+            const src = item.src;
+            const win = stat[name];
+            return <tr key={name}>
+              <td><img src={src}/></td>
+              <td>{name}</td>
+              <td>{win}</td>
+            </tr>
+          })}
+        </table> */}
       </div>
     );
   }
-  if (game.length === 0 || round + 1 > game.length / 2)
-    return <p>로딩중입니다</p>;
+  if (game.length === 0 || round + 1 > game.length / 2) return <p>로딩중입니다</p>;
+  const left = round * 2, right = round * 2 + 1;
+
+  
+
+  const leftFunction = () => {
+    setStat({
+      ...stat, 
+      [game[left].name]: stat[game[left].name] + 1
+    });
+    // setStat((prevStat) => {
+    //   prevStat[ game[left].name ] = prevStat[ game[left].name] + 1;
+    //   return prevStat;
+    //   }
+    // );
+    selectImage(game[left])
+  };
+
+  const rightFunction = () => {
+    setStat({
+      ...stat, 
+      [game[right].name]: stat[game[right].name] + 1
+      }
+    );
+    selectImage(game[right])
+  };
+
   return (
     <div style={styles.container}>
       {/* <p>이상형 월드컵 {round + 1} / {game.length / 2} <b>{game.length === 2 ? "결승" : game.length + "강"}</b></p> */}
@@ -98,16 +172,16 @@ function Worldcup() {
       <div style={styles.contentbox}>
         {selectedImage ? (<img src={selectedImage.src} style={styles.image} />) 
         : (<>
-            <img src={game[round * 2].src} style={styles.image} onClick={() => selectImage(game[round * 2])} />
-            <img src={game[round * 2 + 1].src} style={styles.image} onClick={() => selectImage(game[round * 2 + 1])} />
+            <img src={game[left].src} style={styles.image} onClick={leftFunction} />
+            <img src={game[right].src} style={styles.image} onClick={rightFunction} />
             </>
         )}
       </div>
       <div style={styles.textContent}>
       {selectedImage ? (<p style={styles.imageName}>{selectedImage.name}</p>) 
         : (<>
-            <p style={styles.imageName}>{game[round * 2].name}</p>
-            <p style={styles.imageName}>{game[round * 2 + 1].name}</p>
+            <p style={styles.imageName}>{game[left].name}</p>
+            <p style={styles.imageName}>{game[right].name}</p>
             </>
         )}
       </div>
@@ -122,7 +196,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItem: "center",
-    backgroundColor: "gray",
+    backgroundColor: "white",
   },
   title: {
     backgroundColor: "rgba(0,0,0,0.5)",
