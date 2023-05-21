@@ -40,40 +40,40 @@ function Worldcup() {
   const [round, setRound] = useState(0);
   const [nextGame, setNextGame] = useState([]);
   const [stat, setStat] = useState({
-    "너구리" : 0,
-    "육개장사발면" : 0,
-    "팔도비빔면" : 0,
-    "불닭볶음면" : 0,
-    "신라면" : 0,
-    "신라면블랙" : 0,
-    "안성탕면" : 0,
-    "왕뚜껑" : 0,
-    "까르보불닭컵라면" : 0,
-    "진라면매운맛" : 0,
-    "진라면순한맛" : 0,
-    "진짬뽕" : 0,
-    "짜파게티" : 0,
-    "짜파게티범벅" : 0,
-    "참깨라면" : 0,
-    "튀김우동" : 0,
+    너구리: 0,
+    육개장사발면: 0,
+    팔도비빔면: 0,
+    불닭볶음면: 0,
+    신라면: 0,
+    신라면블랙: 0,
+    안성탕면: 0,
+    왕뚜껑: 0,
+    까르보불닭컵라면: 0,
+    진라면매운맛: 0,
+    진라면순한맛: 0,
+    진짬뽕: 0,
+    짜파게티: 0,
+    짜파게티범벅: 0,
+    참깨라면: 0,
+    튀김우동: 0,
   });
 
-  const [selectedImage, setSelectedImage] = useState(null);//클릭된 이미지 저장
+  const [selectedImage, setSelectedImage] = useState(null); //클릭된 이미지 저장
 
   const selectImage = (image) => {
     setSelectedImage(image);
     setTimeout(() => {
-        setNextGame((prev) => prev.concat(image));
-        setRound((round) => round + 1);
-        setSelectedImage(null);
+      setNextGame((prev) => prev.concat(image));
+      setRound((round) => round + 1);
+      setSelectedImage(null);
     }, 3000);
-};
+  };
 
   // 처음 Worldcup 컴포넌트가 단 한 번 실행하는 함수
   useEffect(() => {
     const 문자열 = localStorage.getItem("월드컵");
-    if( 문자열 != null ){
-      setStat( JSON.parse(문자열) );
+    if (문자열 != null) {
+      setStat(JSON.parse(문자열));
     }
 
     setGame(
@@ -100,65 +100,60 @@ function Worldcup() {
     console.log(stat);
   }, [stat]);
 
+  // 우승 화면
   if (game.length === 1) {
-    localStorage.setItem("월드컵", JSON.stringify( stat ) );
+    localStorage.setItem("월드컵", JSON.stringify(stat));
     return (
       <div style={styles.container}>
         <p style={styles.title}>라면 월드컵 우승</p>
-        <div style={styles.contentbox}>
-            <img src={game[0].src} style={styles.image}/>
+        <div style={styles.winnerContainer}>
+          <div style={styles.contentbox}>
+            <img src={game[0].src} style={styles.image} />
+          </div>
+          <p style={styles.imageName}>{game[0].name}</p>
+          <p style={{marginTop:"0px",marginBottom:"30px",}}>{stat[game[0].name]}번 승리</p>
+          <table style={styles.winnerTable}>
+            <caption>승리 횟수 순위</caption>
+            {Object.keys(stat)
+              .sort((l, r) => stat[r] - stat[l])
+              .map((name) => {
+                return (
+                  <tr key={name} style={styles.winnerTableTr}>
+                    <td>{name}</td>
+                    <td>{stat[name]}</td>
+                  </tr>
+                );
+              })}
+          </table>
         </div>
-        <div style={styles.textContent}>
-            <p style={styles.imageName}>{game[0].name}</p>
-        </div>
-        <p>{ stat[ game[0].name] }번 승리</p>
-
-        <table>
-          {Object.keys(stat).map(name => {
-            return <tr key={name}><td>{name}</td><td>{stat[name]}</td></tr>
-          })}
-        </table>
-
-        {/* <table>
-          {game.flatMap(item => {
-            const name = item.name;
-            const src = item.src;
-            const win = stat[name];
-            return <tr key={name}>
-              <td><img src={src}/></td>
-              <td>{name}</td>
-              <td>{win}</td>
-            </tr>
-          })}
-        </table> */}
       </div>
     );
   }
-  if (game.length === 0 || round + 1 > game.length / 2) return <p>로딩중입니다</p>;
-  const left = round * 2, right = round * 2 + 1;
 
-  
+  if (game.length === 0 || round + 1 > game.length / 2)
+    return <p>로딩중입니다</p>;
+  const left = round * 2,
+    right = round * 2 + 1;
 
   const leftFunction = () => {
     setStat({
-      ...stat, 
-      [game[left].name]: stat[game[left].name] + 1
+      ...stat,
+      [game[left].name]: stat[game[left].name] + 1,
     });
     // setStat((prevStat) => {
     //   prevStat[ game[left].name ] = prevStat[ game[left].name] + 1;
     //   return prevStat;
     //   }
     // );
-    selectImage(game[left])
+    selectImage(game[left]);
   };
 
   const rightFunction = () => {
     setStat({
-      ...stat, 
-      [game[right].name]: stat[game[right].name] + 1
-      }
-    );
-    selectImage(game[right])
+      ...stat,
+      [game[right].name]: stat[game[right].name] + 1,
+    });
+    selectImage(game[right]);
   };
 
   return (
@@ -170,19 +165,31 @@ function Worldcup() {
         {game.length !== 2 ? <b>강</b> : ""}
       </p>
       <div style={styles.contentbox}>
-        {selectedImage ? (<img src={selectedImage.src} style={styles.image} />) 
-        : (<>
-            <img src={game[left].src} style={styles.image} onClick={leftFunction} />
-            <img src={game[right].src} style={styles.image} onClick={rightFunction} />
-            </>
+        {selectedImage ? (
+          <img src={selectedImage.src} style={styles.image} />
+        ) : (
+          <>
+            <img
+              src={game[left].src}
+              style={styles.image}
+              onClick={leftFunction}
+            />
+            <img
+              src={game[right].src}
+              style={styles.image}
+              onClick={rightFunction}
+            />
+          </>
         )}
       </div>
       <div style={styles.textContent}>
-      {selectedImage ? (<p style={styles.imageName}>{selectedImage.name}</p>) 
-        : (<>
+        {selectedImage ? (
+          <p style={styles.imageName}>{selectedImage.name}</p>
+        ) : (
+          <>
             <p style={styles.imageName}>{game[left].name}</p>
             <p style={styles.imageName}>{game[right].name}</p>
-            </>
+          </>
         )}
       </div>
     </div>
@@ -197,6 +204,7 @@ const styles = {
     flexDirection: "column",
     alignItem: "center",
     backgroundColor: "white",
+    fontFamily: "Noto Sans KR",
   },
   title: {
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -212,12 +220,12 @@ const styles = {
     justifyContent: "space-around",
     width: "90%",
     margin: "0px auto",
-    maxHeight: '90%',
+    maxHeight: "90%",
   },
   image: {
-    width: '50%',
-    transition: 'all 3s ease-in-out',
-},
+    width: "50%",
+    transition: "all 3s ease-in-out",
+  },
   textContent: {
     position: "absolute",
     top: "70%",
@@ -230,8 +238,21 @@ const styles = {
     fontSize: "20px",
     fontWeight: "bold",
     textShadow: "-2px 0px black, 0px 2px black, 2px 0px black, 0px -2px black",
-  },  
+  },
+  winnerContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  winnerTable: {
+    width: "50vw",
+    borderCollapse: "collapse",
+  },
+  winnerTableTr: {
+    borderTop: "1px solid lightgray",
+    borderBottom: "1px solid lightgray",
+    height: "5vh",
+  }
 };
-
 
 export default Worldcup;
