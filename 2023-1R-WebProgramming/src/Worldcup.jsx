@@ -102,7 +102,7 @@ function Worldcup() {
 
   // 우승 화면
   if (game.length === 1) {
-    localStorage.setItem("월드컵", JSON.stringify(stat));
+    localStorage.setItem("2019111991", JSON.stringify(stat));
     return (
       <div style={styles.container}>
         <p style={styles.title}>라면 월드컵 우승</p>
@@ -158,7 +158,6 @@ function Worldcup() {
 
   return (
     <div style={styles.container}>
-      {/* <p>이상형 월드컵 {round + 1} / {game.length / 2} <b>{game.length === 2 ? "결승" : game.length + "강"}</b></p> */}
       <p style={styles.title}>
         라면 월드컵{" "}
         {game.length === 2 ? <b>결승전</b> : round + 1 + "/" + game.length / 2}
